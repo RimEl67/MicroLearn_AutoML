@@ -1,0 +1,173 @@
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: microlern-postgres
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - microlern-net
+
+  redis:
+    image: redis:7
+    container_name: microlern-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - microlern-net
+
+  minio:
+    image: minio/minio
+    container_name: microlern-minio
+    command: server /data --console-address ":9001"
+    env_file: .env
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - microlern-net
+
+  minio-init:
+    image: minio/mc
+    depends_on:
+      - minio
+    volumes:
+      - ./infrastructure/minio/buckets.sh:/buckets.sh
+    entrypoint: sh /buckets.sh
+    networks:
+      - microlern-net
+
+  nats:
+    image: nats:2.10
+    container_name: microlern-nats
+    ports:
+      - "4222:4222"
+    networks:
+      - microlern-net
+
+  mlflow:
+    build: ./infrastructure/mlflow
+    container_name: microlern-mlflow
+    env_file: .env
+    depends_on:
+      - postgres
+      - minio
+    ports:
+      - "5000:5000"
+    networks:
+      - microlern-net
+
+  # ---------------- SERVICES ---------------- #
+
+  data-preparer:
+    build: ./services/data-preparer
+    container_name: data-preparer
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+      - minio
+    ports:
+      - "8001:8000"
+    networks:
+      - microlern-net
+
+  model-selector:
+    build: ./services/model-selector
+    container_name: model-selector
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+      - minio
+    ports:
+      - "8002:8000"
+    networks:
+      - microlern-net
+
+  trainer:
+    build: ./services/trainer
+    container_name: trainer
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+      - minio
+      - mlflow
+    ports:
+      - "8003:8000"
+    networks:
+      - microlern-net
+
+  evaluator:
+    build: ./services/evaluator
+    container_name: evaluator
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+    ports:
+      - "8004:8000"
+    networks:
+      - microlern-net
+
+  hyperopt:
+    build: ./services/HyperOpt
+    container_name: hyperopt
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+    ports:
+      - "8005:8000"
+    networks:
+      - microlern-net
+
+  deployer:
+    build: ./services/deployer
+    container_name: deployer
+    env_file:
+      - ./.env
+    depends_on:
+      - trainer
+    ports:
+      - "8006:8000"
+    networks:
+      - microlern-net
+
+  orchestrator:
+    build: ./services/orchestrator
+    container_name: orchestrator
+    depends_on:
+      - data-preparer
+      - model-selector
+      - trainer
+      - evaluator
+      - hyperopt
+    ports:
+      - "5004:5004"
+    networks:
+      - microlern-net
+
+  dashboard:
+    build: ./services/dashboard
+    container_name: dashboard
+    ports:
+      - "3000:3000"
+    networks:
+      - microlern-net
+
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  microlern-net:
+    driver: bridge
