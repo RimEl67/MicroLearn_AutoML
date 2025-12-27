@@ -72,6 +72,12 @@ Avant de lancer le projet, assure-toi d’avoir :
 docker-compose up --build
 
 
-https://github.com/user-attachments/assets/60168428-9be9-4839-9adf-bbfd6420e398
+
+
+
+https://github.com/user-attachments/assets/b763d6ba-f96f-4e8d-927d-30d066d43fdc
+
+
+
 
 
