@@ -68,15 +68,12 @@ Avant de lancer le projet, assure-toi d’avoir :
 <img width="1125" height="600" alt="image" src="https://github.com/user-attachments/assets/ffec4215-7ac0-4c2d-8d68-3a217c076376" />
 <img width="1154" height="504" alt="image" src="https://github.com/user-attachments/assets/2af74f57-aa4f-4f55-931d-9331c609c8e7" />
 
+
+https://github.com/user-attachments/assets/cd880aca-3e46-4073-b355-de7e578e3667
+
+
 ```bash
 docker-compose up --build
-
-
-
-
-
-https://github.com/user-attachments/assets/b763d6ba-f96f-4e8d-927d-30d066d43fdc
-
 
 
 
