@@ -70,3 +70,8 @@ Avant de lancer le projet, assure-toi d’avoir :
 
 ```bash
 docker-compose up --build
+
+
+https://github.com/user-attachments/assets/60168428-9be9-4839-9adf-bbfd6420e398
+
+
