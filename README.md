@@ -1,4 +1,4 @@
-# MicroLearn - Réalisé par: Rim EL ABBASSI, Brahim EL MAJDAOUI, Badr ICAME, Taha NACIRI
+# MicroLearn 
 
 MicroLearn est une plateforme **AutoML modulaire** basée sur des microservices.  
 Elle permet de **préparer des données**, **sélectionner des modèles**, **entraîner**, **évaluer**, **optimiser** et **déployer** des modèles de Machine Learning via des API REST.  
